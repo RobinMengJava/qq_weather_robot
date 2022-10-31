@@ -16,11 +16,6 @@ robot_config = YamlUtil.read(os.path.join(os.path.dirname(__file__), "config.yam
 public_channel_id = ""
 
 async def _message_event_handler(event, message: qqbot.Message):
-    """
-    定义事件回调的处理
-    :param event: 事件类型
-    :param message: 事件对象（如监听消息是Message对象）
-    """
     msg_api = qqbot.AsyncMessageAPI(t_token, False)
     content = message.content
     if "/天气" in content:
@@ -33,10 +28,6 @@ async def _message_event_handler(event, message: qqbot.Message):
         await send_weather_private_message(weather, message.guild_id, message.author.id)
 
 async def get_city_weather(city_name: str) -> Dict:
-    """
-    获取天气信息
-    :return: 返回天气数据的json对象
-    """
     weather_api_url = "http://api.k780.com/?app=weather.today&cityNm=" + city_name + "&appkey=67705&sign=80eebbcf357b4ed958ed254826a0e6ff&format=json"
     async with aiohttp.ClientSession() as session:
         async with session.get(
@@ -83,6 +74,7 @@ async def send_weather_private_message(weather_dict, guild_id, user_id):
     dms_api = qqbot.AsyncDmsAPI(t_token, False)
     direct_message_guild = await dms_api.create_direct_message(CreateDirectMessageRequest(guild_id, user_id))
     await dms_api.post_direct_message(direct_message_guild.guild_id, send)
+    
 if __name__ == "__main__":
     t_token = qqbot.Token(robot_config["token"]["appid"], robot_config["token"]["token"])
     qqbot_handler = qqbot.Handler(
